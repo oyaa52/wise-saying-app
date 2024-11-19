@@ -49,6 +49,16 @@ public class Main {
                 for (String[] value : list) {
                     System.out.println(value[0] + " | " + value[2] + " | " + value[1]);
                 }
+            } else if (text.contains("삭제?id=")) {
+                String index = String.valueOf(text.charAt(text.length() - 1));
+                for (String[] value : list) {
+                    if (index.equals(value[0])) {
+                        list.remove(Integer.parseInt(index)-1);
+                        System.out.println(index + "번 명령이 삭제되었습니다.");
+                    } else {
+                        System.out.println(index + "번 명언은 존재하지 않습니다.");
+                    }
+                }
             }
         } while (!text.equals("종료"));
     }
