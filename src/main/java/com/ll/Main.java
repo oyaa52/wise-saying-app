@@ -6,6 +6,7 @@ import java.util.Scanner;
 public class Main {
     static int totalData = 0;
     static ArrayList<String[]> list = new ArrayList<>();
+
     public static class Data {
         String[] data = new String[3];
         String quotes;
@@ -51,15 +52,44 @@ public class Main {
                 }
             } else if (text.contains("삭제?id=")) {
                 String index = String.valueOf(text.charAt(text.length() - 1));
+                boolean isFound = false;
                 for (String[] value : list) {
                     if (index.equals(value[0])) {
-                        list.remove(Integer.parseInt(index)-1);
+                        list.remove(Integer.parseInt(index) - 1);
                         System.out.println(index + "번 명령이 삭제되었습니다.");
-                    } else {
-                        System.out.println(index + "번 명언은 존재하지 않습니다.");
+                        isFound = true;
+                        break;
                     }
                 }
+                if (!isFound) {
+                    System.out.println(index + "번 명언은 존재하지 않습니다.");
+                }
+            } else if (text.contains("수정?id=")) {
+                String index = String.valueOf(text.charAt(text.length() - 1));
+                boolean isFound = false;
+                for (String[] value : list) {
+                    if (index.equals(value[0])) {
+                        System.out.println("명언(기존): " + value[1]);
+                        System.out.println("명언(수정): ");
+                        String newQuotes = scanner.nextLine();
+                        System.out.println("작가(기존): " + value[2]);
+                        System.out.println("작가(수정): ");
+                        String newName = scanner.nextLine();
+                        if (!newQuotes.isEmpty() && !newQuotes.equals(value[1])) {
+                            value[1] = newQuotes;
+                        }
+                        if (!newName.isEmpty() && !newName.equals(value[2])) {
+                            value[2] = newName;
+                        }
+                        isFound = true;
+                        break;
+                    }
+                }
+                if (!isFound) {
+                    System.out.println(index + "번 명언은 존재하지 않습니다.");
+                }
             }
-        } while (!text.equals("종료"));
+        }
+        while (!text.equals("종료"));
     }
 }
