@@ -17,7 +17,7 @@ public class Main {
 class App {
     int totalData = 0;
     ArrayList<String[]> list = new ArrayList<>();
-    File file;
+    File directory = new File("db/wiseSaying");
 
     public void run() {
         class Data {
@@ -31,12 +31,12 @@ class App {
                 totalData++;
             }
 
-            public String[] save(String quotes, String name) {
+            public void save(String quotes, String name) {
                 data[0] = String.valueOf(totalData);
                 data[1] = quotes;
                 data[2] = name;
                 list.add(data);
-                return data;
+//                list.add(new String[]{String.valueOf(index), quotes, name});
             }
 
             public void saveMessage() {
@@ -112,6 +112,34 @@ class App {
                 } else {
                     scanner.close();
                 }
+            } else if (text.equals("빌드")) {
+                StringBuilder combinedJson = new StringBuilder();
+                combinedJson.append("[\n");
+                File[] files = directory.listFiles();
+                if (files != null && files.length > 0) {
+                    for (int i = 0; i < files.length; i++) {
+                        File file = files[i];
+                        if (file.isFile() && !file.getName().equals("lastId.txt") && !file.getName().equals("data.json")) {
+                            try {
+                                String content = new String(Files.readAllBytes(Paths.get(file.getPath())));
+                                combinedJson.append(content.trim());
+                                if (i < files.length - 1) {
+                                    combinedJson.append(",\n");
+                                }
+                                combinedJson.append("\n");
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    combinedJson.append("]");
+                    try (FileWriter fileWriter = new FileWriter("db/wiseSaying/data.json")) {
+                        fileWriter.write(combinedJson.toString());
+                        System.out.println("data.json 파일의 내용이 갱신되었습니다.");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
         while (!text.equals("종료"));
@@ -148,12 +176,12 @@ class App {
                 if (lastId > 0) {
                     System.out.println("프로그램 다시 시작...");
                     System.out.println("마지막 id: " + lastId);
-                    File directory = new File("db/wiseSaying");
+//                    File directory = new File("db/wiseSaying");
                     if (directory.exists() && directory.isDirectory()) {
                         File[] files = directory.listFiles();
                         if (files != null && files.length > 0) {
                             for (File file : files) {
-                                if (file.isFile() && !file.getName().equals("lastId.txt")) {
+                                if (file.isFile() && !file.getName().equals("lastId.txt") && !file.getName().equals("data.json")) {
                                     try {
                                         // TODO 이 부분은 ChatGPT 사용하고 이해 완전히 못했으므로 복습할 것
                                         String[] lines = Files.readAllLines(Paths.get(file.getPath())).toArray(new String[0]);
